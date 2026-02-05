@@ -4,7 +4,7 @@ Per la scrittura del Server è stato usato l'IDE Visual Studio 2026 e un progett
 Per il corretto funzionamento si consiglia per tale ragione l'utilizzo del suddetto <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>.
 
 
-  <summary>Requisiti:</summary>
+  <summary>Requisiti Server:</summary>
   <ol>
     <li>Database PostgreSQL
       <ul>
