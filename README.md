@@ -10,15 +10,15 @@ Per il corretto funzionamento si consiglia per tale ragione l'utilizzo del sudde
       <ul>
         <li>Installare <a href="https://www.enterprisedb.com/downloads/postgres-postgresql-downloads">PostgreSQL</a></li>
       </ul>
-        <li>Creazione di un file chiamato <code>.ENV</code> da posizionare nella cartella <code>ProjectWorkServer</code>
-          con i dati inseriti in installazione così composto:
-    <p><code>JWT_KEY=chiaveJWTdaALMENO32byte
+        <li>Creazione di un file chiamato <code>.ENV</code> da posizionare nella cartella <code>ProjectWorkServer</code> così composto:
+    <p><code>JWT_KEY=chiaveJWT°
  DB_HOST=localhost*
  DB_PORT=NumeroPorta*
  DB_NAME=NomeDatabase*
  DB_USER=NomeUtentePostgre*
- DB_PASS=PasswordPostgre*</code>
-	<p>*Dati inerenti a PostgreSQL</p></p>
+ DB_PASS=PasswordPostgre*</code><br>
+	° Chiave per JWT di almeno 32 byte quindi 32 char UTF-8.<br>
+	* Dati scelti durante l'installazione di PostgreSQL</p>
         </li>
     </li>
         <li>Pacchetti NuGet
