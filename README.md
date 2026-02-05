@@ -1,6 +1,6 @@
 ## ProjectWork n.16 - MARTINO MATTEO 
 
-Per la scrittura è stato usato l'IDE Visual Studio 2026 e un progetto ASP.NET Core (linguaggio C#)
+Per la scrittura del Server è stato usato l'IDE Visual Studio 2026 e un progetto ASP.NET Core (linguaggio C#)
 Per il corretto funzionamento si consiglia per tale ragione l'utilizzo del suddetto <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>.
 
 
