@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectWork.Server.Models;
+using Sprache;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,7 +22,7 @@ namespace ProjectWorkServer.Controllers
 		/// <summary>
 		/// Permette di registrare un nuovo utente nel database
 		/// </summary>
-		/// <param name="user">Riceve in input una classe utente (UserId è calcolato autonomamente)</param>
+		/// <param name="user">Richiede in input una classe utente (UserId è calcolato autonomamente)</param>
 		/// <returns code="200">Restituisce 200OK se l'utente è stato registrato correttamente</returns>
 		/// <returns code="400">Restituisce BadRequest in caso di errore</returns>
 		[HttpPost("Add")]
@@ -51,7 +52,7 @@ namespace ProjectWorkServer.Controllers
 		/// <returns code="404">Restituisce 404NotFound se l'utente non viene trovato</returns>
 		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
 		[HttpPost("UserInfo")]
-		public async Task<IActionResult> GetUserData([FromBody] string userId)
+		public async Task<IActionResult> GetUserInfo([FromBody] string userId)
 		{
 			try
 			{
@@ -75,6 +76,78 @@ namespace ProjectWorkServer.Controllers
 			catch (Exception ex)
 			{
 				return BadRequest(ex.Message);
+			}
+		}
+
+		/// <summary>
+		/// Aggiorna i dati di un utente, richiede in input una classe User con l'userId e Password (non aggiornabili) e i dati da aggiornare.
+		/// </summary>
+		/// <param name="request">Richiede in input un formato UserInfo</param>
+		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato aggiorna i dati dell'utente esclusa password</returns>
+		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
+		[HttpPut("UserUpdate")]
+		public async Task<IActionResult> UpdateUser([FromBody] User request)
+		{
+			try
+			{
+				var user = await _context.User.FirstOrDefaultAsync(x =>
+				x.UserId == request.UserId &&
+				x.PasswordHash== Methods.SaltedPassword(request.PasswordHash, request.UserId));
+
+				if (user == null)
+				{
+					return NotFound("Utente non trovato");
+				}
+
+				user.Genere = request.Genere;
+				user.Compleanno = request.Compleanno;
+				user.Com_Nascita = request.Com_Nascita;
+				user.Com_Residenza = request.Com_Residenza;
+				user.Ind_Residenza = request.Ind_Residenza;
+				user.Email = request.Email;
+
+				await _context.SaveChangesAsync();
+
+				return Ok("Utente aggiornato");
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("errore: " + ex);
+			}
+		}
+
+		/// <summary>
+		/// Permette di aggiornare la password di un utente, richiede in input l'userId, la password attuale e la nuova password.
+		/// Se l'userId e la password attuale corrispondono a un utente presente nel database.
+		/// Aggiorna la password con quella nuova, altrimenti restituisce un messaggio di errore.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato e la password correttamente aggiornata</returns>
+		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
+		[HttpPut("UserPswUpdate")]
+		public async Task<IActionResult> UpdatePsw([FromBody] UserPsw request)
+		{
+			try
+			{
+				var user = await _context.User.FirstOrDefaultAsync(x =>
+					x.UserId == request.UserId &&
+					x.PasswordHash == Methods.SaltedPassword(request.PasswordHash, request.UserId)
+				);
+
+				if (user == null)
+				{
+					return NotFound("Utente non trovato");
+				}
+
+				user.PasswordHash = Methods.SaltedPassword(request.PasswordNew, request.UserId);
+
+				await _context.SaveChangesAsync();
+
+				return Ok("Password aggiornata");
+			}
+			catch (Exception ex)
+			{
+				return BadRequest("errore: " + ex);
 			}
 		}
 
