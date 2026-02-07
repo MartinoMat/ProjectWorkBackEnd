@@ -1,24 +1,24 @@
-## ProjectWork n.16 - MARTINO MATTEO 
+## SERVER ProjectWork n.16 - MARTINO MATTEO 
 
-Per la scrittura del Server è stato usato l'IDE Visual Studio 2026 e un progetto ASP.NET Core (linguaggio C#)
+Per la scrittura del Server è stato usato l'IDE Visual Studio 2026 e un progetto ASP.NET Core (linguaggio C#). <br>
 Per il corretto funzionamento si consiglia per tale ragione l'utilizzo del suddetto <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>.
 
 
-  <summary>Requisiti:</summary>
+  <summary>Requisiti Server:</summary>
   <ol>
     <li>Database PostgreSQL
       <ul>
         <li>Installare <a href="https://www.enterprisedb.com/downloads/postgres-postgresql-downloads">PostgreSQL</a></li>
       </ul>
-        <li>Creazione di un file chiamato <code>.ENV</code> da posizionare nella cartella <code>ProjectWorkServer</code>
-          con i dati inseriti in installazione così composto:
-    <p><code>JWT_KEY=chiaveJWTdaALMENO32byte
+        <li>Creazione di un file chiamato <code>.ENV</code> da posizionare nella cartella <code>ProjectWorkServer</code> così composto:
+    <p><code>JWT_KEY=chiaveJWT°
  DB_HOST=localhost*
  DB_PORT=NumeroPorta*
  DB_NAME=NomeDatabase*
  DB_USER=NomeUtentePostgre*
- DB_PASS=PasswordPostgre*</code>
-	<p>*Dati inerenti a PostgreSQL</p></p>
+ DB_PASS=PasswordPostgre*</code><br>
+	° Chiave per JWT di almeno 32 byte quindi 32 char UTF-8.<br>
+	* Dati scelti durante l'installazione di PostgreSQL</p>
         </li>
     </li>
         <li>Pacchetti NuGet
