@@ -70,7 +70,11 @@ namespace ProjectWorkServer
 
 			app.UseHttpsRedirection();
 
+#if DEBUG
 			app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+#else
+			app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().WithOrigins("Inserire indirizzo"));
+#endif
 
 			app.UseAuthentication();
 			app.UseAuthorization();
