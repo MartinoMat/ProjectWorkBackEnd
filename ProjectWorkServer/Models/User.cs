@@ -155,4 +155,37 @@ namespace ProjectWork.Server.Models
 		[Required]
 		public required string PasswordNew { get; set; }
 	}
+
+    public class UserContacts
+    {
+        /// <summary>
+        /// Id univoco utente.
+        /// </summary>		
+        [Key]
+        public required string UserId { get; set; }
+
+        /// <summary>
+        /// Comune Residenza utente.
+        /// </summary>
+        [Required]
+        public required string Com_Residenza { get; set; }
+
+        /// <summary>
+        /// Indirizzo Residenza utente.
+        /// </summary>
+        [Required]
+        public required string Ind_Residenza { get; set; }
+
+        /// <summary>
+        /// Email utente.
+        /// </summary>
+        [Required]
+        public required string Email { get; set; }
+
+        /// <summary>
+        /// Hash della password utente.
+        /// </summary>
+        [Required]
+        public required string PasswordHash { get; set; }
+    }
 }

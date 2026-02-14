@@ -83,24 +83,21 @@ namespace ProjectWorkServer.Controllers
 		/// Aggiorna i dati di un utente, richiede in input una classe User con l'userId e i dati da aggiornare.
 		/// </summary>
 		/// <param name="request">Richiede in input un formato UserInfo</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato aggiorna i dati dell'utente esclusa password</returns>
+		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato aggiorna mail e residenza</returns>
 		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
 		[HttpPut("UserUpdate")]
-		public async Task<IActionResult> UpdateUser([FromBody] UserInfo request)
+		public async Task<IActionResult> UpdateUser([FromBody] UserContacts request)
 		{
 			try
 			{
 				var user = await _context.User.FirstOrDefaultAsync(x =>
-				x.UserId == request.UserId);
+				x.UserId == request.UserId && x.PasswordHash== Methods.SaltedPassword(request.PasswordHash, request.UserId));
 
 				if (user == null)
 				{
 					return NotFound("Utente non trovato");
 				}
 
-				user.Genere = request.Genere;
-				user.Compleanno = request.Compleanno;
-				user.Com_Nascita = request.Com_Nascita;
 				user.Com_Residenza = request.Com_Residenza;
 				user.Ind_Residenza = request.Ind_Residenza;
 				user.Email = request.Email;
