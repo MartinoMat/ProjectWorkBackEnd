@@ -11,5 +11,8 @@ namespace ProjectWork.Server.Models
 		}
 		public DbSet<User> User { get; set; }
 		public DbSet<CodiceComune> CodiceComune { get; set; }
-	}
+        public DbSet<Reparto> Reparto { get; set; }
+        public DbSet<Esame> Esame { get; set; }
+        public DbSet<Prenotazione> Prenotazione { get; set; }
+    }
 }

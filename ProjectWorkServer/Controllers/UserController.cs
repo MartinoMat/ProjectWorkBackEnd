@@ -48,7 +48,7 @@ namespace ProjectWorkServer.Controllers
 		/// Inviando l'userId nel body, restituisce i dati dell'utente corrispondente se presente, altrimenti restituisce un messaggio di errore.
 		/// </summary>
 		/// <param name="userId">Richiede in input l'UserId dell'utente</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato e risponde con un oggetto User contentente i dati dell'utente esclusa psw</returns>
+		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato e risponde con un oggetto UserInfo( =User ex psw)</returns>
 		/// <returns code="404">Restituisce 404NotFound se l'utente non viene trovato</returns>
 		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
 		[HttpPost("UserInfo")]
@@ -82,7 +82,7 @@ namespace ProjectWorkServer.Controllers
 		/// <summary>
 		/// Aggiorna i dati di un utente, richiede in input una classe User con l'userId e i dati da aggiornare.
 		/// </summary>
-		/// <param name="request">Richiede in input un formato UserInfo</param>
+		/// <param name="request">Richiede in input un formato UserContacts</param>
 		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato aggiorna mail e residenza</returns>
 		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
 		[HttpPut("UserUpdate")]
