@@ -38,7 +38,7 @@ namespace ProjectWorkServer.Controllers
 						e.EsameId,
 						e.Nome_Esame,
 						e.Desc_Esame,
-						Prenotazione= e.Prenotazione.Where(q=>q.Riservato==null && q.Data>= oggi)
+						Prenotazione= e.Prenotazione.Where(q=>q.UserId==null && q.Data>= oggi)
 							.GroupBy(g => g.Data)
 							.Select(g => new {
 									Data = g.Key,
@@ -74,7 +74,7 @@ namespace ProjectWorkServer.Controllers
 					x.EsameId == request.EsameId &&
 					x.Data == request.Data &&
 					x.Orario == request.Orario &&
-					x.Riservato== null
+					x.UserId== null
 				);
 
 				if (prenota == null)
@@ -82,7 +82,7 @@ namespace ProjectWorkServer.Controllers
 					return NotFound("Disponibilità non trovata");
 				}
 
-				prenota.Riservato = request.Riservato;
+				prenota.UserId = request.UserId;
 
 				await _context.SaveChangesAsync();
 
@@ -113,7 +113,7 @@ namespace ProjectWorkServer.Controllers
 					x.EsameId == request.EsameId &&
 					x.Data == request.Data &&
 					x.Orario == request.Orario &&
-					x.Riservato == request.Riservato
+					x.UserId == request.UserId
 				);
 
 				if (prenota == null)
@@ -121,7 +121,7 @@ namespace ProjectWorkServer.Controllers
 					return NotFound("Prenotazione non trovata");
 				}
 
-				prenota.Riservato = null;
+				prenota.UserId = null;
 
 				await _context.SaveChangesAsync();
 
@@ -133,23 +133,24 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-        /// <summary>
-        /// Richiede la lista di tutte le prenotazioni di un utente.
-        /// </summary>
-        /// <param name="userId">Richiede l'UserId per </param>
-        /// <returns code="200">Restituisce 200OK se l'elenco delle prenotazioni dell'utente è stato ottenuto correttamente</returns>
-        /// <returns code="404">Restituisce 404NotFound se l'utente non ha appuntamenti</returns>
-        /// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-        [HttpPost("PrenotazioniUser")]
+		/// <summary>
+		/// Richiede la lista di tutte le prenotazioni di un utente.
+		/// </summary>
+		/// <param name="userId">Richiede l'UserId</param>
+		/// <returns code="200">Restituisce 200OK se l'elenco delle prenotazioni dell'utente è stato ottenuto correttamente</returns>
+		/// <returns code="404">Restituisce 404NotFound se l'utente non ha appuntamenti</returns>
+		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
+		[HttpPost("PrenotazioniUser")]
 		public async Task<IActionResult> GetPrenotazioni([FromBody] string userId)
 		{
 			try
-			{
-				var pren = await (from p in _context.Prenotazione
+            {
+                var oggi = DateOnly.FromDateTime(DateTime.Today);
+                var pren = await (from p in _context.Prenotazione
 								  join r in _context.Reparto on p.RepartoId equals r.RepartoId
 								  join e in _context.Esame on p.EsameId equals e.EsameId
-								  where p.Riservato == userId
-								  select new InfoPren {
+								  where p.UserId == userId && p.Data>= oggi
+                                  select new InfoPren {
 										PrenotazioneId =p.PrenotazioneId,
 										RepartoId=p.RepartoId,
 										NomeReparto= r.Nome_Reparto,
@@ -157,8 +158,8 @@ namespace ProjectWorkServer.Controllers
 										NomeEsame=e.Nome_Esame,
 										Data = p.Data,
 										Orario = p.Orario,
-										Riservato = p.Riservato
-				}).ToListAsync();
+										UserId = p.UserId
+				}).OrderBy(d=>d.Data).ThenBy(o => o.Orario).ToListAsync();
 
 				if (pren == null) { return NotFound("Utente non trovato"); }
 				return Ok(pren);
@@ -169,22 +170,22 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-        /// <summary>
-        /// Ottinene un elenco di date con annesse ad esse gli orari disponibili per ognuna per uno specifico esame.
+		/// <summary>
+		/// Ottinene un elenco di date con annesse ad esse gli orari disponibili per ognuna per uno specifico esame.
 		/// Ordinati per data e orario con dataEsame>=oggi
-        /// </summary>
-        /// <param name="request">richiede l'id della prenotazione (per ricavare il tipo di esame)
-        /// e l'user a cui è associata (per sicurezza)</param>
-        /// <returns code="200">Restituisce 200OK se l'elenco di date e orari è stato ottenuto correttamente</returns>
-        /// <returns code="404">Restituisce 404NotFound se User e Prenotazione non corrispondono</returns>
-        /// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-        [HttpPost("DateAlt")]
+		/// </summary>
+		/// <param name="request">richiede l'id della prenotazione (per ricavare il tipo di esame)
+		/// e l'user a cui è associata (per sicurezza)</param>
+		/// <returns code="200">Restituisce 200OK se l'elenco di date e orari è stato ottenuto correttamente</returns>
+		/// <returns code="404">Restituisce 404NotFound se User e Prenotazione non corrispondono</returns>
+		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
+		[HttpPost("DateAlt")]
 		public async Task<IActionResult> GetEditPren( [FromBody] PrenotazAlt request)
 		{
 			try
 			{
 				var pren = await _context.Prenotazione
-					.FirstOrDefaultAsync(p => p.PrenotazioneId == request.PrenotazioneId && p.Riservato == request.userId);
+					.FirstOrDefaultAsync(p => p.PrenotazioneId == request.PrenotazioneId && p.UserId == request.userId);
 
 				if (pren == null)
 				{
@@ -194,7 +195,7 @@ namespace ProjectWorkServer.Controllers
 				var dateAlt = await _context.Prenotazione
 					.Where(p => p.RepartoId == pren.RepartoId &&
 								p.EsameId == pren.EsameId &&
-								p.Riservato == null &&
+								p.UserId == null &&
 								p.Data >= oggi)
 					.GroupBy(p => p.Data)
 					.Select(d => new

@@ -30,8 +30,14 @@ namespace ProjectWorkServer.Controllers
 		{
 			try
 			{
+				user.Nome = char.ToUpper(user.Nome[0]) + user.Nome[1..].ToLower();
+				user.Cognome = char.ToUpper(user.Cognome[0]) + user.Cognome[1..].ToLower();
+				user.Com_Nascita = char.ToUpper(user.Com_Nascita[0]) + user.Com_Nascita[1..].ToLower();
+				user.Com_Residenza = char.ToUpper(user.Com_Residenza[0]) + user.Com_Residenza[1..].ToLower();
+
 				user.UserId = Methods.ComputeSHA256(user.Codice_Fiscale + user.Nome + user.Cognome);
 				user.PasswordHash = Methods.SaltedPassword(user.PasswordHash, user.UserId);
+				
 
 				_context.User.Add(user);
 				await _context.SaveChangesAsync();

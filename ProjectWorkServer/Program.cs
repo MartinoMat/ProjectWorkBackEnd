@@ -71,12 +71,12 @@ namespace ProjectWorkServer
 			app.UseHttpsRedirection();
 
 #if DEBUG
-			app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+			app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("Content-Disposition"));
 #else
-			app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().WithOrigins("Inserire indirizzo"));
+			app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().WithOrigins("Inserire indirizzo").WithExposedHeaders("Content-Disposition"););
 #endif
 
-			app.UseAuthentication();
+            app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.MapControllers();

@@ -11,9 +11,10 @@ namespace ProjectWorkServer.Models
 		public required int EsameId { get; set; }
 		public required DateOnly Data { get; set; }
 		public required TimeOnly Orario { get; set; }
-		public string? Riservato { get; set; }
+		public string? UserId { get; set; }
+        public bool? Referto { get; set; }
 
-	}
+    }
 	public class InfoPren
 	{
 		[Key]
@@ -24,7 +25,7 @@ namespace ProjectWorkServer.Models
 		public required string NomeEsame { get; set; }
 		public required DateOnly Data { get; set; }
 		public required TimeOnly Orario { get; set; }
-		public string? Riservato { get; set; }
+		public string? UserId { get; set; }
 
 	}
 	public class Reparto
