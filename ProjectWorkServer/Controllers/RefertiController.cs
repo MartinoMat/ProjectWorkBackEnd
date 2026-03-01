@@ -23,16 +23,16 @@ namespace ProjectWorkServer.Controllers
 		private readonly string _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "Docs\\");
 
 
-        /// <summary>
-        /// Cerca tutte le prenotazioni associate all'userId fornito che hanno un referto disponibile (Referto == true)
+		/// <summary>
+		/// Cerca tutte le prenotazioni associate all'userId fornito che hanno un referto disponibile (Referto == true)
 		/// Restituisce una lista di oggetti InfoPren contenenti i dettagli delle prenotazioni, ordinati per data e orario.
 		/// Se non viene trovato alcun utente o se si verifica un errore durante l'esecuzione della query, restituisce un messaggio di errore appropriato.
-        /// </summary>
-        /// <param name="userId">Riceve una richiesta contenente l'userId</param>
-        /// <returns code="200">Restituisce una lista di oggetti InfoPren con i dettagli delle prenotazioni</returns>
-		/// <returns code="400">Restituisce un messaggio di errore se si verifica un errore durante l'esecuzione della query</returns>
-		/// <returns code="404">Restituisce un messaggio di errore se non viene trovato alcun utente </returns>
-        [HttpPost("RefertiUser")]
+		/// </summary>
+		/// <param name="userId">Riceve una richiesta contenente l'userId</param>
+		/// <response code="200">Restituisce una lista di oggetti InfoPren con i dettagli delle prenotazioni</response>
+		/// <response code="400">Restituisce un messaggio di errore se si verifica un errore durante l'esecuzione della query</response>
+		/// <response code="404">Restituisce un messaggio di errore se non viene trovato alcun utente </response>
+		[HttpPost("RefertiUser")]
 		public async Task<IActionResult> GetPrenotazioni([FromBody] string userId)
 		{
 			try
@@ -62,17 +62,17 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-        /// <summary>
-        /// Verifica se esiste un referto associato alla prenotazione fornita e corrisponde all'utente fornito.
+		/// <summary>
+		/// Verifica se esiste un referto associato alla prenotazione fornita e corrisponde all'utente fornito.
 		/// Se presente, crea un file ZIP contenente i documenti del referto e lo restituisce come download.
 		/// Se non ci sono referti disponibili o se la cartella specificata non esiste, restituisce un messaggio di errore appropriato
-        /// </summary>
-        /// <param name="req">Riceve una richiesta contenente l'userId e prenotazioneId</param>
-        /// <returns code="200">Restituisce un file ZIP con i documenti del referto</returns>
-		/// <returns code="400">Restituisce un messaggio di errore se i dati della richiesta sono incompleti o se la cartella è vuota</returns>
-		/// <returns code="404">Restituisce un messaggio di errore se non ci sono referti disponibili o se la cartella specificata non esiste</returns>
-		/// <returns code="500">Restituisce un messaggio di errore se si verifica un errore durante la creazione dello ZIP</returns>
-        [HttpPost("Download")]
+		/// </summary>
+		/// <param name="req">Riceve una richiesta contenente l'userId e prenotazioneId</param>
+		/// <response code="200">Restituisce un file ZIP con i documenti del referto</response>
+		/// <response code="400">Restituisce un messaggio di errore se i dati della richiesta sono incompleti o se la cartella è vuota</response>
+		/// <response code="404">Restituisce un messaggio di errore se non ci sono referti disponibili o se la cartella specificata non esiste</response>
+		/// <response code="500">Restituisce un messaggio di errore se si verifica un errore durante la creazione dello ZIP</response>
+		[HttpPost("Download")]
 		public async Task<IActionResult> GetFileRef([FromBody] PrenotazAlt req)
 		{
 			try { 
@@ -132,5 +132,57 @@ namespace ProjectWorkServer.Controllers
 				return StatusCode(500, $"Errore durante la creazione dello ZIP: {ex.Message}");
 			}
 		}
+
+
+#if DEBUG
+        /// <summary>
+        /// Permette di caricare file di referti per scopi di test.
+		/// Riceve un oggetto PrenotazAlt contenente userId e PrenotazioneId, insieme a una lista di file.
+        /// </summary>
+        /// <param name="data">Oggetto contenente userId e prenotazioneId</param>
+        /// <param name="files">Lista di files da caricare</param>
+        /// <response code="200">Restituisce un messaggio di avvenuto caricamento</response>
+		/// <response code="400">Restituisce un messaggio di errore se i dati della richiesta sono incompleti o il tipo di file non è accettato</response>
+        [HttpPost("Upload")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadFiles([FromForm] PrenotazAlt data, List<IFormFile> files)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf", ".docx" };
+
+            if (files == null || files.Count == 0)
+                return BadRequest("Nessun file selezionato.");
+
+            foreach (var file in files)
+            {
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+                {
+                    return BadRequest($"Tipo di file non permesso: {file.FileName}. Estensioni consentite: {string.Join(", ", allowedExtensions)}");
+                }
+            }
+
+            var targetPath = Path.Combine(_storagePath, data.userId, data.PrenotazioneId.ToString());
+
+            if (!Directory.Exists(targetPath))
+            {
+                Directory.CreateDirectory(targetPath);
+            }
+
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    var filePath = Path.Combine(targetPath, file.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                }
+            }
+
+            return Ok(new { message = "Files caricati correttamente", path = targetPath });
+        }
+#endif
 	}
 }

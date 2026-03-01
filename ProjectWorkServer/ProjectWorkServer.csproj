@@ -31,4 +31,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Docs\c2d840a918b2becf7f8e1d229616206886e8c768927a7cc0e00b850a920f4bf9\1\" />
+  </ItemGroup>
+
 </Project>

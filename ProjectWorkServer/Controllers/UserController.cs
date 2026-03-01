@@ -23,8 +23,8 @@ namespace ProjectWorkServer.Controllers
 		/// Permette di registrare un nuovo utente nel database
 		/// </summary>
 		/// <param name="user">Richiede in input una classe utente (UserId è calcolato autonomamente)</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è stato registrato correttamente</returns>
-		/// <returns code="400">Restituisce BadRequest in caso di errore</returns>
+		/// <response code="200">Restituisce 200OK se l'utente è stato registrato correttamente</response>
+		/// <response code="400">Restituisce BadRequest in caso di errore</response>
 		[HttpPost("Add")]
 		public async Task<IActionResult> AddUser([FromBody] User user)
 		{
@@ -54,9 +54,9 @@ namespace ProjectWorkServer.Controllers
 		/// Inviando l'userId nel body, restituisce i dati dell'utente corrispondente se presente, altrimenti restituisce un messaggio di errore.
 		/// </summary>
 		/// <param name="userId">Richiede in input l'UserId dell'utente</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato e risponde con un oggetto UserInfo( =User ex psw)</returns>
-		/// <returns code="404">Restituisce 404NotFound se l'utente non viene trovato</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
+		/// <response code="200">Restituisce 200OK se l'utente è stato trovato e risponde con un oggetto UserInfo( =User ex psw)</response>
+		/// <response code="404">Restituisce 404NotFound se l'utente non viene trovato</response>
+		/// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
 		[HttpPost("UserInfo")]
 		public async Task<IActionResult> GetUserInfo([FromBody] string userId)
 		{
@@ -85,13 +85,13 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-		/// <summary>
-		/// Aggiorna i dati di un utente, richiede in input una classe User con l'userId e i dati da aggiornare.
-		/// </summary>
-		/// <param name="request">Richiede in input un formato UserContacts</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato aggiorna mail e residenza</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpPut("UserUpdate")]
+        /// <summary>
+        /// Aggiorna i dati di un utente, richiede in input una classe User con l'userId e i dati da aggiornare.
+        /// </summary>
+        /// <param name="request">Richiede in input un formato UserContacts</param>
+        /// <response code="200">Restituisce 200OK se l'utente è stato trovato aggiorna mail e residenza</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpPut("UserUpdate")]
 		public async Task<IActionResult> UpdateUser([FromBody] UserContacts request)
 		{
 			try
@@ -118,15 +118,15 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-		/// <summary>
-		/// Permette di aggiornare la password di un utente, richiede in input l'userId, la password attuale e la nuova password.
-		/// Se l'userId e la password attuale corrispondono a un utente presente nel database.
-		/// Aggiorna la password con quella nuova, altrimenti restituisce un messaggio di errore.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns code="200">Restituisce 200OK se l'utente è stato trovato e la password correttamente aggiornata</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpPut("UserPswUpdate")]
+        /// <summary>
+        /// Permette di aggiornare la password di un utente, richiede in input l'userId, la password attuale e la nuova password.
+        /// Se l'userId e la password attuale corrispondono a un utente presente nel database.
+        /// Aggiorna la password con quella nuova, altrimenti restituisce un messaggio di errore.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <response code="200">Restituisce 200OK se l'utente è stato trovato e la password correttamente aggiornata</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpPut("UserPswUpdate")]
 		public async Task<IActionResult> UpdatePsw([FromBody] UserPsw request)
 		{
 			try

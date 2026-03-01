@@ -17,14 +17,14 @@ namespace ProjectWorkServer.Controllers
 			_context = context;
 		}
 
-		/// <summary>
-		/// Restituisce la lista gli orari disponibili per ogni esame (Riservato == null), raggruppati per data, esame e reparto. 
-		/// {reparto:[{esame:[{data:[orari]}]}]}.
-		/// Ordinati per data e orario con dataEsame>=oggi
-		/// </summary>
-		/// <returns code="200">Restituisce 200OK con la lista delle disponibilità</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpGet("Esami")]
+        /// <summary>
+        /// Restituisce la lista gli orari disponibili per ogni esame (Riservato == null), raggruppati per data, esame e reparto. 
+        /// {reparto:[{esame:[{data:[orari]}]}]}.
+        /// Ordinati per data e orario con dataEsame>=oggi
+        /// </summary>
+        /// <response code="200">Restituisce 200OK con la lista delle disponibilità</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpGet("Esami")]
 		public async Task<IActionResult> GetReparti()
 		{
 			var oggi = DateOnly.FromDateTime(DateTime.Today);
@@ -55,15 +55,15 @@ namespace ProjectWorkServer.Controllers
 			return Ok(result);
 		}
 
-		/// <summary>
-		/// Riserva uno slot orario per un esame, se disponibile.
-		/// La prenotazione viene identificata da PrenotazioneId ma anche da RepartoId, EsameId, Data e Orario come controllo di ridondanza.
-		/// Se lo slot è disponibile (Riservato == null), viene aggiornato con UserId in Riservato.
-		/// </summary>
-		/// <param name="request">Riceve in input un oggetto di tipo Prenotazione</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è assegnato correttamente aggiornata</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpPut("Prenota")]
+        /// <summary>
+        /// Riserva uno slot orario per un esame, se disponibile.
+        /// La prenotazione viene identificata da PrenotazioneId ma anche da RepartoId, EsameId, Data e Orario come controllo di ridondanza.
+        /// Se lo slot è disponibile (Riservato == null), viene aggiornato con UserId in Riservato.
+        /// </summary>
+        /// <param name="request">Riceve in input un oggetto di tipo Prenotazione</param>
+        /// <response code="200">Restituisce 200OK se l'utente è assegnato correttamente aggiornata</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpPut("Prenota")]
 		public async Task<IActionResult> PrenotaEsame([FromBody] Prenotazione request)
 		{
 			try
@@ -94,15 +94,15 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-		/// <summary>
-		/// libera uno slot orario per un esame.
-		/// La prenotazione viene identificata da PrenotazioneId ma anche da RepartoId, EsameId, Data e Orario come controllo di ridondanza.
-		/// Se lo slot è assegnato (Riservato == UserId), viene aggiornato con null in Riservato.
-		/// </summary>
-		/// <param name="request">Riceve in input un oggetto di tipo Prenotazione</param>
-		/// <returns code="200">Restituisce 200OK se l'utente è rimosso correttamente aggiornata</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpPut("AnnullaPren")]
+        /// <summary>
+        /// libera uno slot orario per un esame.
+        /// La prenotazione viene identificata da PrenotazioneId ma anche da RepartoId, EsameId, Data e Orario come controllo di ridondanza.
+        /// Se lo slot è assegnato (Riservato == UserId), viene aggiornato con null in Riservato.
+        /// </summary>
+        /// <param name="request">Riceve in input un oggetto di tipo Prenotazione</param>
+        /// <response code="200">Restituisce 200OK se l'utente è rimosso correttamente aggiornata</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpPut("AnnullaPren")]
 		public async Task<IActionResult> AnnullaEsame([FromBody] Prenotazione request)
 		{
 			try
@@ -133,14 +133,14 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-		/// <summary>
-		/// Richiede la lista di tutte le prenotazioni di un utente.
-		/// </summary>
-		/// <param name="userId">Richiede l'UserId</param>
-		/// <returns code="200">Restituisce 200OK se l'elenco delle prenotazioni dell'utente è stato ottenuto correttamente</returns>
-		/// <returns code="404">Restituisce 404NotFound se l'utente non ha appuntamenti</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpPost("PrenotazioniUser")]
+        /// <summary>
+        /// Richiede la lista di tutte le prenotazioni di un utente.
+        /// </summary>
+        /// <param name="userId">Richiede l'UserId</param>
+        /// <response code="200">Restituisce 200OK se l'elenco delle prenotazioni dell'utente è stato ottenuto correttamente</response>
+        /// <response code="404">Restituisce 404NotFound se l'utente non ha appuntamenti</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpPost("PrenotazioniUser")]
 		public async Task<IActionResult> GetPrenotazioni([FromBody] string userId)
 		{
 			try
@@ -170,16 +170,16 @@ namespace ProjectWorkServer.Controllers
 			}
 		}
 
-		/// <summary>
-		/// Ottinene un elenco di date con annesse ad esse gli orari disponibili per ognuna per uno specifico esame.
-		/// Ordinati per data e orario con dataEsame>=oggi
-		/// </summary>
-		/// <param name="request">richiede l'id della prenotazione (per ricavare il tipo di esame)
-		/// e l'user a cui è associata (per sicurezza)</param>
-		/// <returns code="200">Restituisce 200OK se l'elenco di date e orari è stato ottenuto correttamente</returns>
-		/// <returns code="404">Restituisce 404NotFound se User e Prenotazione non corrispondono</returns>
-		/// <returns code="400">Restituisce 400BadRequest in caso di errore generico</returns>
-		[HttpPost("DateAlt")]
+        /// <summary>
+        /// Ottinene un elenco di date con annesse ad esse gli orari disponibili per ognuna per uno specifico esame.
+        /// Ordinati per data e orario con dataEsame>=oggi
+        /// </summary>
+        /// <param name="request">richiede l'id della prenotazione (per ricavare il tipo di esame)
+        /// e l'user a cui è associata (per sicurezza)</param>
+        /// <response code="200">Restituisce 200OK se l'elenco di date e orari è stato ottenuto correttamente</response>
+        /// <response code="404">Restituisce 404NotFound se User e Prenotazione non corrispondono</response>
+        /// <response code="400">Restituisce 400BadRequest in caso di errore generico</response>
+        [HttpPost("DateAlt")]
 		public async Task<IActionResult> GetEditPren( [FromBody] PrenotazAlt request)
 		{
 			try
@@ -221,6 +221,8 @@ namespace ProjectWorkServer.Controllers
 			{
 				return BadRequest(ex.Message);
 			}
+
 		}
+
 	}
 }
